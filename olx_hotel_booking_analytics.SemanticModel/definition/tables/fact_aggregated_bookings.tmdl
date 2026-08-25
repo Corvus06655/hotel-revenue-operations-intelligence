@@ -1,0 +1,65 @@
+table fact_aggregated_bookings
+	lineageTag: d62d046f-91d6-4fdb-a8a6-4020e19d952f
+
+	column property_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 4b73ae9c-9451-4c3d-ac18-8d66aa150d65
+		summarizeBy: none
+		sourceColumn: property_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column check_in_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cf9c1cdc-965e-4302-9ab1-7e11e8056e71
+		summarizeBy: none
+		sourceColumn: check_in_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column room_category
+		dataType: string
+		lineageTag: a99aba5e-32d6-4b0b-a68a-41ae2e90ed66
+		summarizeBy: none
+		sourceColumn: room_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column successful_bookings
+		dataType: int64
+		formatString: 0
+		lineageTag: 588553f9-f942-4952-8918-2350e649aebe
+		summarizeBy: sum
+		sourceColumn: successful_bookings
+
+		annotation SummarizationSetBy = Automatic
+
+	column capacity
+		dataType: int64
+		formatString: 0
+		lineageTag: f6132773-b24f-44df-beaa-050f792c79e3
+		summarizeBy: sum
+		sourceColumn: capacity
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_aggregated_bookings = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files("C:\path\to\hotel-booking-analytics\data"),
+				    #"C:\path\to\hotel-booking-analytics\data\_fact_aggregated_bookings csv" = Source{[#"Folder Path"="C:\path\to\hotel-booking-analytics\data\",Name="fact_aggregated_bookings.csv"]}[Content],
+				    #"Imported CSV" = Csv.Document(#"C:\path\to\hotel-booking-analytics\data\_fact_aggregated_bookings csv",[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Imported CSV", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"property_id", Int64.Type}, {"check_in_date", type date}, {"room_category", type text}, {"successful_bookings", Int64.Type}, {"capacity", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

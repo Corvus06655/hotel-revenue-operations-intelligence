@@ -1,0 +1,52 @@
+table dim_hotels
+	lineageTag: 4f7ebfe3-4a9e-4954-b712-7bcd7cc49b56
+
+	column property_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 79073691-5d87-42f2-a793-937b9ac4be9d
+		summarizeBy: none
+		sourceColumn: property_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column property_name
+		dataType: string
+		lineageTag: 053a5ab1-793c-4625-9802-0ed3b5909f34
+		summarizeBy: none
+		sourceColumn: property_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column category
+		dataType: string
+		lineageTag: eb6b938c-ab22-42fc-9b3e-5050bb18341f
+		summarizeBy: none
+		sourceColumn: category
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: b2173d20-dfe7-41e2-ad3f-3b74d173bb0b
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_hotels = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files("C:\path\to\hotel-booking-analytics\data"),
+				    #"C:\path\to\hotel-booking-analytics\data\_dim_hotels csv" = Source{[#"Folder Path"="C:\path\to\hotel-booking-analytics\data\",Name="dim_hotels.csv"]}[Content],
+				    #"Imported CSV" = Csv.Document(#"C:\path\to\hotel-booking-analytics\data\_dim_hotels csv",[Delimiter=",", Columns=4, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Imported CSV", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"property_id", Int64.Type}, {"property_name", type text}, {"category", type text}, {"city", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 0,
+            "y": 0
+          },
+          "nodeIndex": "dim_date",
+          "nodeLineageTag": "7f242509-4f03-4818-bb05-8463d1257d8f",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 945.18475118062986,
+            "y": 223.93489082265557
+          },
+          "nodeIndex": "dim_hotels",
+          "nodeLineageTag": "4f7ebfe3-4a9e-4954-b712-7bcd7cc49b56",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 409
+          },
+          "nodeIndex": "dim_rooms",
+          "nodeLineageTag": "4642a577-72df-43bc-b4a5-0f61c52088de",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 496.36163941535983,
+            "y": 525.25988345509234
+          },
+          "nodeIndex": "fact_aggregated_bookings",
+          "nodeLineageTag": "d62d046f-91d6-4fdb-a8a6-4020e19d952f",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 503,
+            "y": 0
+          },
+          "nodeIndex": "fact_bookings",
+          "nodeLineageTag": "171a8542-9f99-44fb-ae9c-a9e2433cf6fe",
+          "size": {
+            "height": 381,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1229.18475118063,
+            "y": 310.62994172754617
+          },
+          "nodeIndex": "Measures (2)",
+          "nodeLineageTag": "77042a93-c151-42a3-a697-cc36b6602e11",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 79.553182037699941,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

@@ -1,0 +1,44 @@
+relationship 4283c497-2174-4894-bd1b-f04dde4407e4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_date.date
+	toColumn: LocalDateTable_925f1578-cfa3-414d-b3d3-b80a3564e49f.Date
+
+relationship 9651b3fc-51bc-4a89-88cc-28c73c04590b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_date.'mmm yy'
+	toColumn: LocalDateTable_26642032-4721-4ba9-a2d9-796766e5c221.Date
+
+relationship 1c3d445c-4620-45fe-b767-d30dc1367923
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.booking_date
+	toColumn: LocalDateTable_ebc7932d-dcda-4004-b95f-6a1a3a696d9c.Date
+
+relationship 3c41a3b7-2962-465f-ade4-d7bfcbb64542
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.checkout_date
+	toColumn: LocalDateTable_ba171211-01a0-47dd-9f7a-5fb1e7123e66.Date
+
+relationship AutoDetected_3bacc2c5-28c8-4418-b1af-0e9312acb04d
+	fromColumn: fact_aggregated_bookings.property_id
+	toColumn: dim_hotels.property_id
+
+relationship AutoDetected_2715dc7b-dc9e-4d38-aa5a-d3dc411cf49f
+	fromColumn: fact_bookings.property_id
+	toColumn: dim_hotels.property_id
+
+relationship 931f063a-9a5d-9c1c-143e-99290e1fa222
+	fromColumn: fact_bookings.check_in_date
+	toColumn: dim_date.date
+
+relationship 8c264a1e-3eee-4158-7216-4b8c8038097a
+	fromColumn: fact_aggregated_bookings.check_in_date
+	toColumn: dim_date.date
+
+relationship e1eb5f9a-6cee-3f75-6950-59001858b304
+	fromColumn: fact_aggregated_bookings.room_category
+	toColumn: dim_rooms.room_id
+
+relationship 231bacf6-2b70-14d5-87d6-695d07ea9d3d
+	fromColumn: fact_bookings.room_category
+	toColumn: dim_rooms.room_id
+
