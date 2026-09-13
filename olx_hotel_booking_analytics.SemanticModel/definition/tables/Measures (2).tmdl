@@ -42,16 +42,15 @@ table 'Measures (2)'
 		lineageTag: 7f412f26-16d2-4d1e-883e-efccc9cbe890
 
 	measure 'No Show rate %' = DIVIDE([Total No show booking],[Total Booking])
+		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 68688bcc-dedd-42ca-b5e0-286f00f6e04a
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Booking % by Platform' = CALCULATE([Total Booking],ALL(fact_bookings[booking_platform]))*100
-		formatString: 0
+	measure 'Booking % by Platform' = DIVIDE([Total Booking],CALCULATE([Total Booking],ALL(fact_bookings[booking_platform])),0)
+		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: ba74aefd-fafa-4173-89f5-1e257b84123e
 
-	measure 'Booking % by Room Class' = CALCULATE([Total Booking],ALL(dim_rooms[room_class]))*100
-		formatString: 0
+	measure 'Booking % by Room Class' = DIVIDE([Total Booking],CALCULATE([Total Booking],ALL(dim_rooms[room_class])),0)
+		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 0c162866-b22a-443b-8c1f-b2ff679377e2
 
 	measure ADR = DIVIDE([Revenue],[Total Booking])
@@ -59,13 +58,14 @@ table 'Measures (2)'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Realisation %' = 1-[Cancelled %]+[No Show rate %]
+	measure 'Realisation %' = 1-[Cancelled %]-[No Show rate %]
+		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: d55ff177-549b-4db0-acfd-a28f53dec13c
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure Revpar = DIVIDE([Revenue],[Total  Capacity])
-		lineageTag: cbea208c-6490-49ca-a4ca-faee66e5b4f7
+		lineageTag: cbea208c-6499-49ac-a4ca-faee66e5b4f7
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -80,7 +80,7 @@ table 'Measures (2)'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure DURN = DIVIDE([Total Checkout],[no of days])
-		lineageTag: 25809ced-f00e-4ac8-a7a2-fae347b35129
+		lineageTag: 25809ced-f00e-4ac8-a2a7-fae347b35129
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
