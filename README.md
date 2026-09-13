@@ -8,8 +8,6 @@ A Power BI Project (PBIP) for examining hotel booking performance, realised reve
 
 Hotel operators need a consistent view of booking volume, realised revenue, room capacity, occupancy, booking status, property performance, and booking-platform mix. This project organizes those questions into a two-page Power BI report with a dimensional model and DAX measures that can support executive monitoring and property-level operational review.
 
-The analysis is designed to help a reviewer inspect how the model connects booking activity with hotel, room, and date dimensions, and how the report surfaces revenue, occupancy, status, platform, rating, and property comparisons. It does not claim a measured business impact because the source CSV files are not included in the public repository.
-
 ## Business Objectives
 
 The published report is structured to:
@@ -20,20 +18,6 @@ The published report is structured to:
 - Provide a property-and-operations view for investigating cancellations, no-shows, ratings, platform mix, and property-level performance.
 - Make the report logic auditable through visible PBIP, TMDL, DAX, page, visual, and theme definitions.
 
-## Decision-Oriented Business Questions
-
-The report structure supports questions such as:
-
-1. How does realised revenue change across the available reporting period?
-2. Which properties, cities, and room classes contribute most to recorded revenue and booking volume?
-3. How do capacity and successful bookings translate into the model's occupancy percentage?
-4. What is the booking-status mix across checked-out, cancelled, and no-show bookings?
-5. Which booking platforms account for the largest booking volumes in the available data?
-6. How do property, room-class, platform, rating, and status dimensions relate to the operating KPIs shown in the report?
-7. How do revenue, occupancy, ADR, realisation, and capacity-related measures change week over week?
-
-These are analytical questions supported by the published schema and visual bindings. They are not presented as findings because the underlying CSV data is not distributed with this repository.
-
 ## Dashboard Storytelling
 
 The report contains two pages arranged from broad performance monitoring to operational investigation.
@@ -43,15 +27,45 @@ The report contains two pages arranged from broad performance monitoring to oper
 | **Executive Overview** | Establish a high-level view of hotel performance. | Total revenue, booking volume, occupancy, ADR, average rating, monthly revenue trend, revenue by room class, city and room filters, and status-related monitoring. |
 | **Property & Operations** | Compare properties and investigate operating drivers. | Property performance detail, booking-platform mix, booking-status volume, cancellation and no-show measures, ratings, realisation, room and property filters, and operational KPI cards. |
 
-The report pages use a consistent dark visual theme and embedded report assets. Page and visual definitions are retained in the PBIP folders so the presentation can be reviewed alongside the underlying model logic.
+## KPI Framework
+
+The following measures are present in the semantic model. Definitions below use the published calculation logic.
+
+| KPI | Definition | Business meaning |
+| --- | --- | --- |
+| **Realised Revenue** | Sum of `fact_bookings[revenue_realized]`. | Recorded realised revenue from the booking fact table. |
+| **Total Bookings** | Count of `fact_bookings[booking_id]`. | Booking volume at booking-record level. |
+| **Total Capacity** | Sum of `fact_aggregated_bookings[capacity]`. | Capacity recorded in the aggregated bookings table. |
+| **Successful Bookings** | Sum of `fact_aggregated_bookings[successful_bookings]`. | Successful-booking volume recorded in the capacity table. |
+| **Occupancy %** | Successful bookings divided by total capacity. | Capacity utilisation under the model definition. |
+| **Cancelled %** | Cancelled bookings divided by total bookings. | Share of booking records with Cancelled status. |
+| **No-show Rate %** | No-show bookings divided by total bookings. | Share of booking records with No Show status. |
+| **Booking % by Platform** | Current platform booking count divided by total booking count with the platform filter removed. | Platform share of booking records. |
+| **Booking % by Room Class** | Current room-class booking count divided by total booking count with the room-class filter removed. | Room-class share of booking records. |
+| **ADR** | Realised revenue divided by total bookings. | Average realised revenue per booking record under the model definition. |
+| **RevPAR** | Realised revenue divided by total capacity. | Revenue relative to recorded capacity under the model definition. |
+| **Realisation %** | `1 - [Cancelled %] - [No Show rate %]`. | Share of booking records remaining after recorded cancellations and no-shows. This is a model-derived operational KPI, not a profitability measure. |
+| **Average Rating** | Average of `fact_bookings[ratings_given]`. | Average rating value in the booking records. |
+| **DBRN / DSRN / DURN** | Bookings, capacity, and checkout volume divided by the model's number of days. | Daily-rate measures based on the available date span. |
+| **Week-over-week changes** | Current-week versus prior-week comparison for revenue, occupancy, ADR, realisation, and DSRN. | Directional movement between weekly periods. |
+
+### Model QA — resolved
+
+The percentage measures that were previously ambiguous have been corrected in the semantic model:
+
+- **Booking % by Platform** now uses `DIVIDE([Total Booking], CALCULATE([Total Booking], ALL(fact_bookings[booking_platform])), 0)` instead of multiplying an unfiltered count by 100.
+- **Booking % by Room Class** now uses `DIVIDE([Total Booking], CALCULATE([Total Booking], ALL(dim_rooms[room_class])), 0)` instead of multiplying an unfiltered count by 100.
+- **Realisation %** now uses `1 - [Cancelled %] - [No Show rate %]`, so cancellations and no-shows both reduce the realised share.
+
+These measures are formatted as percentages in the semantic model. They should still be interpreted according to the documented model grain and business definition.
+
+## Dashboard Preview
+
+The PBIP contains the two report pages **Executive Overview** and **Property & Operations**. The public repository does not include the source CSV files, so fresh report screenshots require a local Power BI Desktop refresh with the source data. No synthetic dashboard screenshot is substituted for the real report.
 
 ## Dataset and Analytical Grain
 
-### Source and availability
-
 The model identifies the source as an OLX-provided real-time hotel booking dataset. The raw files are not included in the repository, and the public model currently expects them in a local `data` folder. The repository therefore documents the model structure and calculation logic without inventing row counts, column counts, date coverage, or numeric outcomes.
-
-### Raw tables and dimensions
 
 | Object | Role | Documented fields |
 | --- | --- | --- |
@@ -61,56 +75,17 @@ The model identifies the source as an OLX-provided real-time hotel booking datas
 | `fact_bookings` | Booking-level fact table. | Booking ID, property ID, booking date, check-in date, checkout date, guest count, room category, booking platform, rating, booking status, generated revenue, and realised revenue. |
 | `fact_aggregated_bookings` | Capacity and successful-booking fact table. | Property ID, check-in date, room category, successful bookings, and capacity. |
 
-The model joins the fact tables to hotel and room dimensions and connects check-in dates to `dim_date`. Booking and checkout dates also retain local date relationships for date-specific analysis.
-
-### Raw, cleaned, and derived data
-
-The published Power Query definitions show the following preparation steps:
-
-- **Raw inputs:** five CSV files expected in a local data folder: `dim_date.csv`, `dim_hotels.csv`, `dim_rooms.csv`, `fact_aggregated_bookings.csv`, and `fact_bookings.csv`.
-- **Cleaning and typing:** CSV content is imported, headers are promoted, and the documented date, integer, and text fields are assigned explicit data types.
-- **Derived fields:** `dim_date` recomputes a week number and a `day_type` classification in the model. The model also derives KPI measures through DAX.
-- **Aggregations:** capacity and successful-booking values are summed from `fact_aggregated_bookings`; booking and revenue measures are calculated from `fact_bookings`.
-
-The public definitions do not document explicit missing-value imputation, duplicate removal, category standardization, outlier treatment, or invalid-value remediation. Those checks should be completed after the source files are supplied and refreshed.
-
-## KPI Framework
-
-The following measures are present in the semantic model. Definitions below use the model's current calculation logic.
-
-| KPI | Current model definition | Business meaning |
-| --- | --- | --- |
-| **Realised Revenue** | Sum of `fact_bookings[revenue_realized]`. | Recorded revenue realised from the booking fact table. |
-| **Total Bookings** | Count of `fact_bookings[booking_id]`. | Booking volume at the booking-record level. |
-| **Total Capacity** | Sum of `fact_aggregated_bookings[capacity]`. | Capacity recorded in the aggregated bookings table. |
-| **Successful Bookings** | Sum of `fact_aggregated_bookings[successful_bookings]`. | Successful-booking volume recorded in the capacity table. |
-| **Occupancy %** | Successful bookings divided by total capacity. | The model's capacity-utilisation measure. |
-| **Cancelled Bookings / Cancelled %** | Count of bookings where status is `Cancelled`; divided by total bookings for the percentage. | Cancellation volume and its share of booking records. |
-| **Checkout Volume** | Total bookings filtered to `Checked Out`. | Booking records with a checked-out status. |
-| **No-show Volume / No-show Rate %** | Total bookings filtered to `No Show`; divided by total bookings for the rate. | No-show volume and its share of booking records. |
-| **ADR** | Realised revenue divided by total bookings. | Average realised revenue per booking record under the model's definition. |
-| **RevPAR** | Realised revenue divided by total capacity. | Revenue relative to recorded capacity under the model's definition. |
-| **Average Rating** | Average of `fact_bookings[ratings_given]`. | Average rating value present in the booking records. |
-| **DBRN / DSRN / DURN** | Total bookings, total capacity, and checkout volume divided by the model's number of days. | Daily-rate measures based on the available date span. |
-| **Week-over-week changes** | Current-week versus prior-week comparison for revenue, occupancy, ADR, realisation, and DSRN. | Directional movement between the model's weekly periods. |
-
-### Model QA notes
-
-Two existing definitions require validation before being presented as polished percentage KPIs. `Booking % by Platform` and `Booking % by Room Class` currently multiply a filtered booking count by 100 after removing the relevant category filter; they do not calculate a category share using a total-bookings denominator. In addition, `Realisation %` is currently defined as `1 - [Cancelled %] + [No Show rate %]`. The report presentation should preserve these measures as model evidence but should not describe either formula as a validated business rate until the logic is reviewed against the intended definitions.
-
 ## Analytical Methodology
 
-The repository follows this evidence-based workflow:
+The repository follows this workflow:
 
 > **CSV ingestion → header promotion and type casting → dimensional relationships → derived date fields → DAX KPI calculation → executive monitoring → property and operations comparison**
 
-The PBIP structure separates report presentation from the semantic model, allowing a reviewer to trace visible visuals back to fields, measures, relationships, and source queries. This is especially useful for verifying whether a claimed KPI is actually implemented rather than merely described in the README.
+The PBIP structure separates report presentation from the semantic model, allowing a reviewer to trace visible visuals back to fields, measures, relationships, and source queries.
 
 ## Key Insights and Recommendations
 
-Because the source CSV files are not included, this repository does not publish numeric findings or claim a measured performance result. The defensible insight at this stage is about analytical coverage: the report is set up to examine revenue, booking volume, occupancy, capacity, status outcomes, platform mix, room classes, ratings, and property performance through two decision-oriented views.
-
-Once the data is supplied and refreshed, the next analysis should quantify the largest revenue and booking contributors, compare occupancy and realised revenue across properties and room classes, validate cancellation and no-show rates, and investigate week-over-week movements. Management recommendations should be written only after those calculated results and the measure QA notes above have been validated.
+Because the source CSV files are not included, this repository does not publish numeric findings or claim a measured performance result. The report is designed to quantify revenue, booking volume, occupancy, capacity, status outcomes, platform mix, room classes, ratings, and property performance once the source data is refreshed.
 
 ## Limitations
 
@@ -118,10 +93,7 @@ Once the data is supplied and refreshed, the next analysis should quantify the l
 - The source provenance is documented as OLX-provided real-time data, but no public source URL or data dictionary is included in the repository.
 - The model contains booking-level and aggregated-capacity tables, so measures should be interpreted at their respective grains.
 - Cost, profit, acquisition cost, and margin variables are not documented in the published schema; revenue measures should not be treated as profitability measures.
-- Customer-level attributes beyond guest count and booking dimensions are not documented, limiting customer segmentation.
-- Ratings and booking status are available as recorded fields, but the model does not establish causal relationships between them and revenue or occupancy.
-- Missing-value, duplicate, outlier, and invalid-value treatment is not documented in the published Power Query definitions.
-- The percentage measures identified in the model QA notes require validation before being used for formal management reporting.
+- Missing-value, duplicate, outlier, and invalid-value treatment is not fully documented in the published Power Query definitions.
 
 ## Reproducibility
 
@@ -136,13 +108,10 @@ Once the data is supplied and refreshed, the next analysis should quantify the l
 1. Clone or download this repository.
 2. Create a local `data` folder beside the PBIP project.
 3. Add `dim_date.csv`, `dim_hotels.csv`, `dim_rooms.csv`, `fact_aggregated_bookings.csv`, and `fact_bookings.csv` to that folder.
-4. Open the TMDL source definitions and update the `Folder.Files(...)` path if the local folder differs from the neutral placeholder path.
+4. Open the TMDL source definitions and update the `Folder.Files(...)` path if the local folder differs from the placeholder path.
 5. Open `olx_hotel_booking_analytics.pbip` in Power BI Desktop.
 6. Refresh the model and review **Executive Overview** and **Property & Operations**.
-
-### Expected outputs
-
-A successful refresh should make the two report pages available with their configured visuals, filters, semantic relationships, DAX measures, and embedded theme resources. The exact numeric outputs depend on the source files supplied by the reviewer.
+7. Export or capture both refreshed report pages for the README when publishing a visual preview.
 
 ## Repository Structure
 
@@ -170,7 +139,7 @@ The PBIP project is surfaced directly rather than being hidden inside a ZIP arch
 
 ## Professional Positioning
 
-This project’s differentiation is not a claim of unique data. Its portfolio value comes from the business framing, the separation of executive and operational questions, the inspectable dimensional model, the KPI definitions, the documented reproducibility path, and the explicit disclosure of data availability and measure-validation constraints.
+This project's portfolio value comes from the business framing, the separation of executive and operational questions, the inspectable dimensional model, the KPI definitions, the documented reproducibility path, and explicit disclosure of data availability and model limitations.
 
 ## References
 
