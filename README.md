@@ -1,56 +1,42 @@
 # Hotel Revenue & Operations Intelligence
 
-Power BI portfolio project focused on hotel revenue, booking performance, occupancy, property analysis, and operational KPIs.
+A Power BI portfolio project that turns hotel booking data into an executive view of revenue performance and an operational view of property-level opportunities. The deliverable is packaged as a **single PBIX file** for easy review in Power BI Desktop.
 
-## 📊 Dashboard
+## Dashboard previews
 
-The **Power BI dashboard is ready to download and open**.
+### Executive Overview
 
-### Open the dashboard
+![Executive Overview](previews/executive-overview.png)
 
-1. Click **Code → Download ZIP** on this repository.
-2. Extract the downloaded ZIP.
-3. Open **`olx_hotel_booking_analytics.pbip`** with **Power BI Desktop**.
-4. Keep the extracted folder structure unchanged.
-5. Add the required source CSV files, refresh the model, and open the report.
+The executive page brings together revenue, total bookings, occupancy, ADR, revenue trends, city contribution, room-class mix, and booking status.
 
-### Report pages
+### Property & Operations
 
-- **Executive Overview** — revenue, bookings, occupancy, ADR, ratings, trends, city and room analysis.
-- **Property & Operations** — property comparison, platform mix, booking status, cancellations, no-shows, ratings, and operational KPIs.
+![Property & Operations](previews/property-operations.png)
 
-> **Data note:** The public repository does not include the source CSV files. The PBIP project contains the report definition, semantic model, DAX measures, relationships, themes, and visual configuration.
+The operations page focuses on cancellation and no-show exposure, realisation, ratings, booking platforms, booking status, and a property scorecard.
 
-## 🧮 Key KPIs
+## Included deliverable
 
-Revenue · Total Bookings · Capacity · Successful Bookings · Occupancy % · Cancelled % · No-show Rate % · ADR · RevPAR · Realisation % · DBRN · DSRN · DURN · Week-over-week changes
+- [`Hotel_Revenue_Operations_Intelligence.pbix`](Hotel_Revenue_Operations_Intelligence.pbix) — packaged Power BI report with the dashboard pages, data model, measures, visuals, theme, and embedded report assets.
+- [`previews/`](previews/) — recruiter-friendly static previews of the report pages.
 
-## 🛠️ Tech Stack
+## Key analytical areas
 
-**Power BI · DAX · Power Query · PBIP/TMDL · Data Modelling**
+| Area | Examples |
+|---|---|
+| Revenue performance | Revenue, ADR, RevPAR, revenue trend |
+| Demand and occupancy | Total bookings, occupancy, room-class mix |
+| Booking quality | Cancellation rate, no-show rate, realisation |
+| Property performance | City comparison, property scorecard, ratings |
+| Channel and status mix | Platform contribution, booking status distribution |
 
-## ✅ Model QA
+## Tools and techniques
 
-The category-share measures use a proper total-bookings denominator:
+**Power BI · DAX · Power Query · Data Modelling · Dashboard Design · KPI Analysis**
 
-- `Booking % by Platform`
-- `Booking % by Room Class`
+The report is designed for interactive filtering by date, city, and room class. Open the PBIX in **Power BI Desktop** to explore the visuals and model.
 
-`Realisation %` is defined as:
+## Portfolio note
 
-```text
-1 - [Cancelled %] - [No Show rate %]
-```
-
-## 📁 Project structure
-
-```text
-.
-├── README.md
-├── .gitignore
-├── olx_hotel_booking_analytics.pbip
-├── olx_hotel_booking_analytics.Report/
-└── olx_hotel_booking_analytics.SemanticModel/
-```
-
-The repository keeps the PBIP components together so that **GitHub → Download ZIP → Extract → Open `.pbip`** is the complete workflow.
+This repository intentionally presents the finished BI artifact rather than the intermediate PBIP source folders, keeping the review experience focused and easy to navigate for hiring managers and recruiters.
