@@ -6,13 +6,13 @@ A Power BI portfolio project that turns hotel booking data into an executive vie
 
 ### Executive Overview
 
-![Executive Overview](previews/executive-overview.png)
+![Executive Overview](previews/executive-overview-v2.png)
 
 The executive page brings together revenue, total bookings, occupancy, ADR, revenue trends, city contribution, room-class mix, and booking status.
 
 ### Property & Operations
 
-![Property & Operations](previews/property-operations.png)
+![Property & Operations](previews/property-operations-v2.png)
 
 The operations page focuses on cancellation and no-show exposure, realisation, ratings, booking platforms, booking status, and a property scorecard.
 
